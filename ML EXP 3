@@ -1,0 +1,161 @@
+
+
+2	+
+import pandas as pd
+3	+
+import math
+4	+
+from collections import Counter
+5	+
+from pprint import pprint
+6	+
+7	+
+data = {
+8	+
+    "Outlook": ["Sunny", "Sunny", "Overcast", "Rain", "Rain", "Rain",
+9	+
+                "Overcast", "Sunny", "Sunny", "Rain", "Sunny",
+10	+
+                "Overcast", "Overcast", "Rain"],
+11	+
+    "Temperature": ["Hot", "Hot", "Hot", "Mild", "Cool", "Cool",
+12	+
+                    "Cool", "Mild", "Cool", "Mild", "Mild",
+13	+
+                    "Mild", "Hot", "Mild"],
+14	+
+    "Humidity": ["High", "High", "High", "High", "Normal", "Normal",
+15	+
+                 "Normal", "High", "Normal", "Normal", "Normal",
+16	+
+                 "High", "Normal", "High"],
+17	+
+    "Wind": ["Weak", "Strong", "Weak", "Weak", "Weak", "Strong",
+18	+
+             "Strong", "Weak", "Weak", "Weak", "Strong",
+19	+
+             "Strong", "Weak", "Strong"],
+20	+
+    "Play": ["No", "No", "Yes", "Yes", "Yes", "No", "Yes",
+21	+
+             "No", "Yes", "Yes", "Yes", "Yes", "Yes", "No"]
+22	+
+}
+23	+
+24	+
+df = pd.DataFrame(data)
+25	+
+26	+
+def entropy(labels):
+27	+
+    counts = Counter(labels)
+28	+
+    total = len(labels)
+29	+
+    return -sum((n / total) * math.log2(n / total)
+30	+
+                for n in counts.values())
+31	+
+32	+
+def information_gain(df, attribute, target):
+33	+
+    total_entropy = entropy(df[target])
+34	+
+    weighted_entropy = 0
+35	+
+36	+
+    for value in df[attribute].unique():
+37	+
+        subset = df[df[attribute] == value]
+38	+
+        weighted_entropy += (len(subset) / len(df)) * entropy(subset[target])
+39	+
+40	+
+    return total_entropy - weighted_entropy
+41	+
+42	+
+def id3(df, attributes, target):
+43	+
+    if len(df[target].unique()) == 1:
+44	+
+        return df[target].iloc[0]
+45	+
+46	+
+    if not attributes:
+47	+
+        return df[target].mode()[0]
+48	+
+49	+
+    gains = {a: information_gain(df, a, target) for a in attributes}
+50	+
+    best = max(gains, key=gains.get)
+51	+
+52	+
+    tree = {best: {}}
+53	+
+54	+
+    for value in df[best].unique():
+55	+
+        subset = df[df[best] == value]
+56	+
+        remaining = [a for a in attributes if a != best]
+57	+
+58	+
+        if subset.empty:
+59	+
+            tree[best][value] = df[target].mode()[0]
+60	+
+        else:
+61	+
+            tree[best][value] = id3(subset, remaining, target)
+62	+
+63	+
+    return tree
+64	+
+65	+
+attributes = list(df.columns[:-1])
+66	+
+tree = id3(df, attributes, "Play")
+67	+
+68	+
+print("Decision Tree:")
+69	+
+pprint(tree)
+70	+
+71	+
+def predict(tree, sample):
+72	+
+    if not isinstance(tree, dict):
+73	+
+        return tree
+74	+
+75	+
+    attribute = next(iter(tree))
+76	+
+    value = sample.get(attribute)
+77	+
+78	+
+    if value not in tree[attribute]:
+79	+
+        return "Unknown"
+80	+
+81	+
+    return predict(tree[attribute][value], sample)
+82	+
+83	+
+sample = {
+84	+
+    "Outlook": "Sunny",
+85	+
+    "Temperature": "Cool",
+86	+
+    "Humidity": "Normal",
+87	+
+    "Wind": "Strong"
+88	+
+}
+89	+
+90	+
+print("\nNew Sample:", sample)
+91	+
+print("Predicted Class:", predict(tree, sample))
