@@ -1,0 +1,91 @@
+import numpy as np
+
+
+2	+
+from sklearn.datasets import load_iris
+3	+
+from sklearn.model_selection import train_test_split
+4	+
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+5	+
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+6	+
+from tensorflow.keras.models import Sequential
+7	+
+from tensorflow.keras.layers import Dense
+8	+
+9	+
+iris = load_iris()
+10	+
+X = iris.data
+11	+
+y = iris.target.reshape(-1, 1)
+12	+
+13	+
+encoder = OneHotEncoder(sparse_output=False)
+14	+
+y = encoder.fit_transform(y)
+15	+
+16	+
+X_train, X_test, y_train, y_test = train_test_split(
+17	+
+    X, y, test_size=0.2, random_state=42
+18	+
+)
+19	+
+20	+
+scaler = StandardScaler()
+21	+
+X_train = scaler.fit_transform(X_train)
+22	+
+X_test = scaler.transform(X_test)
+23	+
+24	+
+model = Sequential([
+25	+
+    Dense(10, activation='relu', input_shape=(4,)),
+26	+
+    Dense(8, activation='relu'),
+27	+
+    Dense(3, activation='softmax')
+28	+
+])
+29	+
+30	+
+model.compile(
+31	+
+    optimizer='adam',
+32	+
+    loss='categorical_crossentropy',
+33	+
+    metrics=['accuracy']
+34	+
+)
+35	+
+36	+
+model.fit(X_train, y_train, epochs=100, batch_size=8, verbose=0)
+37	+
+38	+
+predictions = model.predict(X_test, verbose=0)
+39	+
+y_pred = np.argmax(predictions, axis=1)
+40	+
+y_actual = np.argmax(y_test, axis=1)
+41	+
+42	+
+print("Test Accuracy:", accuracy_score(y_actual, y_pred))
+43	+
+print("\nConfusion Matrix:")
+44	+
+print(confusion_matrix(y_actual, y_pred))
+45	+
+print("\nClassification Report:")
+46	+
+print(classification_report(y_actual, y_pred, target_names=iris.target_names))
+47	+
+48	+
+sample = X_test[0].reshape(1, -1)
+49	+
+result = model.predict(sample, verbose=0)
+50	+
+print("Predicted Class:", iris.target_names[np.argmax(result)])
