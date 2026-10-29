@@ -1,55 +1,30 @@
 import pandas as pd
 
-
-2	+
-3	+
 data = [
-4	+
     ['Sunny', 'Warm', 'Normal', 'Strong', 'Warm', 'Same', 'Yes'],
-5	+
     ['Sunny', 'Warm', 'High', 'Strong', 'Warm', 'Same', 'Yes'],
-6	+
     ['Rainy', 'Cold', 'High', 'Strong', 'Warm', 'Change', 'No'],
-7	+
     ['Sunny', 'Warm', 'High', 'Strong', 'Cool', 'Change', 'Yes']
-8	+
 ]
-9	+
-10	+
+
 columns = ['Sky', 'AirTemp', 'Humidity', 'Wind', 'Water', 'Forecast', 'EnjoySport']
-11	+
 df = pd.DataFrame(data, columns=columns)
-12	+
-13	+
+
 X = df.iloc[:, :-1].values
-14	+
 y = df.iloc[:, -1].values
-15	+
-16	+
+
 hypothesis = None
-17	+
-18	+
+
 for i in range(len(X)):
-19	+
     if y[i] == 'Yes':
-20	+
         if hypothesis is None:
-21	+
             hypothesis = list(X[i])
-22	+
         else:
-23	+
             for j in range(len(hypothesis)):
-24	+
                 if hypothesis[j] != X[i][j]:
-25	+
                     hypothesis[j] = '?'
-26	+
-27	+
+
 print("Training Data:")
-28	+
 print(df)
-29	+
 print("\nFinal Most Specific Hypothesis:")
-30	+
 print(hypothesis)
