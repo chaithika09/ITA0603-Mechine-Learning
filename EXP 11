@@ -1,76 +1,41 @@
 import numpy as np
-
-
-2	+
 from sklearn.tree import DecisionTreeClassifier
-3	+
 from sklearn.model_selection import train_test_split
-4	+
 from sklearn.metrics import accuracy_score, confusion_matrix
-5	+
-6	+
+
 X = np.array([
-7	+
     [1, 20000, 2],
-8	+
     [2, 30000, 3],
-9	+
     [3, 50000, 5],
-10	+
     [4, 80000, 8],
-11	+
     [5, 100000, 10],
-12	+
     [2, 25000, 2],
-13	+
     [3, 60000, 6],
-14	+
     [1, 15000, 1],
-15	+
     [4, 90000, 9],
-16	+
     [5, 120000, 10],
-17	+
     [2, 35000, 4],
-18	+
     [3, 45000, 5]
-19	+
 ])
-20	+
-21	+
+
 y = np.array([
-22	+
     "Poor", "Poor", "Standard", "Good",
-23	+
     "Good", "Poor", "Standard", "Poor",
-24	+
     "Good", "Good", "Standard", "Standard"
-25	+
 ])
-26	+
-27	+
+
 X_train, X_test, y_train, y_test = train_test_split(
-28	+
     X, y, test_size=0.25, random_state=42, stratify=y
-29	+
 )
-30	+
-31	+
+
 model = DecisionTreeClassifier(random_state=42)
-32	+
 model.fit(X_train, y_train)
-33	+
-34	+
+
 y_pred = model.predict(X_test)
-35	+
-36	+
+
 print("Accuracy:", accuracy_score(y_test, y_pred))
-37	+
 print("Confusion Matrix:")
-38	+
 print(confusion_matrix(y_test, y_pred, labels=["Poor", "Standard", "Good"]))
-39	+
-40	+
+
 sample = [[3, 55000, 5]]
-41	+
 print("Predicted Credit Score:", model.predict(sample)[0])
