@@ -1,76 +1,41 @@
 import numpy as np
-
-
-2	+
 import matplotlib.pyplot as plt
-3	+
 from sklearn.mixture import GaussianMixture
-4	+
 from sklearn.datasets import make_blobs
-5	+
-6	+
+
 X, y = make_blobs(
-7	+
     n_samples=200,
-8	+
     centers=2,
-9	+
     random_state=42,
-10	+
     cluster_std=1.5
-11	+
 )
-12	+
-13	+
+
 model = GaussianMixture(n_components=2, random_state=42)
-14	+
 model.fit(X)
-15	+
-16	+
+
 labels = model.predict(X)
-17	+
-18	+
+
 print("Cluster Means:")
-19	+
 print(model.means_)
-20	+
-21	+
+
 print("\nCluster Probabilities:")
-22	+
 print(model.predict_proba(X)[:10])
-23	+
-24	+
+
 print("\nModel Converged:", model.converged_)
-25	+
 print("Number of Iterations:", model.n_iter_)
-26	+
 print("Log Likelihood:", model.score(X) * len(X))
-27	+
-28	+
+
 plt.scatter(X[:, 0], X[:, 1], c=labels, cmap='viridis')
-29	+
 plt.scatter(
-30	+
     model.means_[:, 0],
-31	+
     model.means_[:, 1],
-32	+
     color='red',
-33	+
     marker='X',
-34	+
     s=200,
-35	+
     label='Cluster Centers'
-36	+
 )
-37	+
 plt.title("Expectation-Maximization Algorithm")
-38	+
 plt.xlabel("Feature 1")
-39	+
 plt.ylabel("Feature 2")
-40	+
 plt.legend()
-41	+
 plt.show()
